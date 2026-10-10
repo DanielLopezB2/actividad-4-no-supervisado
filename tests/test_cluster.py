@@ -38,6 +38,11 @@ def test_choose_k_returns_k_in_range(chosen):
     assert scores[k] == max(scores.values())
 
 
+def test_choose_k_selects_four_archetypes(chosen):
+    k, _ = chosen
+    assert k == 4
+
+
 def test_kmeans_beats_random_labels_on_silhouette(X, chosen):
     k, _ = chosen
     labels = cluster.fit_kmeans(X, k).labels_
