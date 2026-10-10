@@ -40,8 +40,8 @@ Cada estación se asigna a un arquetipo de demanda al generar los datos. El arqu
 |---|---|---|
 | `residential` | Pico fuerte de salida en la mañana (hacia las 7 h) | Portal Eldorado, Portal Américas, Banderas, Marsella, Modelia, Normandía |
 | `business` | Pico fuerte en la tarde (hacia las 18 h) y meseta al mediodía | Calle 100, Calle 72, Calle 63, Calle 45, Calle 34, Héroes, Calle 75 |
-| `hub` | Volumen alto y plano durante el día, con ambos picos | Calle 26, Centro Memoria, Ricaurte |
-| `mixed` | Volumen bajo a moderado y plano, picos suaves | Av. Rojas, Corferias, Concejo de Bogotá, Puente Aranda |
+| `hub` | Volumen alto con tres picos: ambas horas pico y el mediodía (transbordos) | Calle 26, Centro Memoria, Ricaurte |
+| `mixed` | Volumen bajo, con un único abultamiento amplio entre media mañana y la tarde, sin picos de hora pico | Av. Rojas, Corferias, Concejo de Bogotá, Puente Aranda |
 
 Conteo de estaciones: 6 + 7 + 3 + 4 = 20.
 
@@ -63,7 +63,7 @@ Constantes tomadas de `src/dataset.py`:
 | `RAIN_PROB` | 0.25 | Probabilidad de lluvia en un día |
 | `RAIN_FACTOR` | 1.1 | Aumento de volumen los días de lluvia |
 | `NOISE_SIGMA` | 0.12 | Sigma del multiplicador lognormal de cada día |
-| `BASE_VOLUME` | `residential` 140, `business` 120, `hub` 260, `mixed` 60 | Abordajes por hora de referencia |
+| `BASE_VOLUME` | `residential` 140, `business` 120, `hub` 260, `mixed` 70 | Abordajes por hora de referencia |
 
 Forma horaria relativa por arquetipo (`SHAPES`, unidades arbitrarias; `bump(c, a, h)` es una gaussiana de centro `c`, ancho `a` y altura `h`):
 
@@ -71,8 +71,8 @@ Forma horaria relativa por arquetipo (`SHAPES`, unidades arbitrarias; `bump(c, a
 |---|---|
 | `residential` | 0.25 + bump(7, 1.2, 2.6) + bump(18, 1.5, 0.5) |
 | `business` | 0.30 + bump(18, 1.2, 2.4) + bump(13, 2.5, 0.7) |
-| `hub` | 0.90 + bump(7.5, 1.3, 0.8) + bump(17.5, 1.3, 0.8) |
-| `mixed` | 0.80 + bump(8, 1.5, 0.3) + bump(17, 1.5, 0.3) |
+| `hub` | 0.35 + bump(7.5, 1.1, 1.5) + bump(12.5, 1.8, 1.6) + bump(17.5, 1.1, 1.5) |
+| `mixed` | 0.25 + bump(11, 2.0, 1.2) + bump(15, 2.2, 1.0) |
 
 ## 6. Distribución del conjunto generado
 
@@ -80,9 +80,9 @@ Valores reales de `python -m src.dataset`:
 
 | Variable | Resultado |
 |---|---|
-| `day_type` | `weekday` 0.601, `saturday` 0.208, `sunday_holiday` 0.191 |
-| `rain` (proporción de días con lluvia) | 0.243 |
-| Total diario de abordajes | media 2010.8, desviación 1403.4, mínimo 342, mediana 1777.5, máximo 7874 |
+| `day_type` | `weekday` 0.614, `saturday` 0.194, `sunday_holiday` 0.192 |
+| `rain` (proporción de días con lluvia) | 0.246 |
+| Total diario de abordajes | media 2037.0, desviación 1395.0, mínimo 367, mediana 1790.5, máximo 8038 |
 
 Cada estación aporta exactamente 60 filas.
 
@@ -98,5 +98,5 @@ Todas las variables se estandarizan con `StandardScaler` (media 0, desviación 1
 ## 8. Limitaciones
 
 - Los datos son sintéticos: los grupos que se encuentren son los arquetipos escritos en el generador más ruido, no comportamiento real de pasajeros.
-- Los arquetipos `hub` y `mixed` tienen una forma plana parecida; la diferencia principal entre ambos es el volumen, y el algoritmo puede fusionarlos (ver `docs/informe-pruebas.md`).
+- Las formas de `hub` y `mixed` se ajustaron a mano para que fueran distinguibles (en una primera versión eran casi iguales y el algoritmo las fusionaba). Por eso la separación limpia de los cuatro grupos refleja nuestros supuestos, no estructura real (ver `docs/informe-pruebas.md`, sección 6.4).
 - La red es una versión reducida con tiempos y coordenadas aproximados.

@@ -28,7 +28,7 @@ Todos los comandos se ejecutan desde la raíz del repositorio, con el entorno vi
 |---|---|---|
 | 1. Generar datos | `python -m src.dataset` | Escribe `data/station_profiles.csv` (1200 filas, semilla 42) y muestra un resumen |
 | 2. Agrupar | `python -m src.cluster` | Elige k por silueta, ajusta KMeans y jerárquico, imprime métricas y composición de los grupos, y guarda dos gráficas en `docs/img/` |
-| 3. Probar | `python -m pytest -v` | Ejecuta las 11 pruebas automatizadas |
+| 3. Probar | `python -m pytest -v` | Ejecuta las 12 pruebas automatizadas |
 
 Si falta `data/station_profiles.csv`, `src.cluster` lo genera automáticamente.
 
@@ -37,14 +37,15 @@ Si falta `data/station_profiles.csv`, `src.cluster` lo genera automáticamente.
 ```text
 Rows: 1200 | features: 19
 Silhouette by k (KMeans):
-  k=2: 0.562
-  k=3: 0.640  <- chosen
+  k=2: 0.496
+  k=3: 0.608
+  k=4: 0.618  <- chosen
   ...
 ARI KMeans vs hierarchical:        1.000
-ARI KMeans vs hidden archetype:    0.859  (validation only)
+ARI KMeans vs hidden archetype:    1.000  (validation only)
 
-Cluster 0: 360 station-days | mean total 1687
-  day types: {'weekday': 0.59, 'saturday': 0.22, 'sunday_holiday': 0.19}
+Cluster 0: 360 station-days | mean total 1679
+  day types: {'weekday': 0.59, 'saturday': 0.21, 'sunday_holiday': 0.19}
   top stations: {'Portal Eldorado': 60, ...}
 ```
 
@@ -64,7 +65,7 @@ Las gráficas se guardan en `docs/img/clusters-pca.png` (plano PCA) y `docs/img/
 python -m pytest -v
 ```
 
-Resultado esperado: `11 passed`. El detalle está en `docs/informe-pruebas.md`.
+Resultado esperado: `12 passed`. El detalle está en `docs/informe-pruebas.md`.
 
 ## 6. Estructura del proyecto
 
