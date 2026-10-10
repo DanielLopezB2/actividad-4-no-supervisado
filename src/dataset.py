@@ -10,6 +10,13 @@ Each row is one station-day: hourly boardings h05..h22 for one station.
     boardings[h] ~ Poisson(base_volume * shape[archetype][h] * day_factor
                            * rain_factor * lognormal_noise)
 
+Archetype shapes are OUR assumptions, tuned so the four archetypes are visibly
+different: residential (morning peak), business (evening peak + midday plateau),
+hub (high volume, three peaks: both rush hours and midday transfers) and mixed
+(low volume, one broad late-morning/afternoon bump). Separating hub from mixed
+was done by tuning these assumptions, so a perfect recovery shows the method
+works on well-separated groups, not that real stations behave this way.
+
 The archetype of each station is a hidden ground truth: it is NEVER written to
 the CSV and is only used to validate the clusters, not to fit them.
 """
@@ -42,7 +49,7 @@ ARCHETYPES = {
     "mixed": ["Av. Rojas", "Corferias", "Concejo de Bogotá", "Puente Aranda"],
 }
 STATION_ARCHETYPE = {s: a for a, stations in ARCHETYPES.items() for s in stations}
-BASE_VOLUME = {"residential": 140, "business": 120, "hub": 260, "mixed": 60}  # boardings per hour
+BASE_VOLUME = {"residential": 140, "business": 120, "hub": 260, "mixed": 70}  # boardings per hour
 
 
 def _bump(center: float, width: float, height: float) -> np.ndarray:
@@ -53,8 +60,8 @@ def _bump(center: float, width: float, height: float) -> np.ndarray:
 SHAPES = {
     "residential": 0.25 + _bump(7, 1.2, 2.6) + _bump(18, 1.5, 0.5),  # strong morning departure peak
     "business": 0.3 + _bump(18, 1.2, 2.4) + _bump(13, 2.5, 0.7),  # strong evening peak, midday plateau
-    "hub": 0.9 + _bump(7.5, 1.3, 0.8) + _bump(17.5, 1.3, 0.8),  # high flat all day, both peaks
-    "mixed": 0.8 + _bump(8, 1.5, 0.3) + _bump(17, 1.5, 0.3),  # low-moderate flat, mild peaks
+    "hub": 0.35 + _bump(7.5, 1.1, 1.5) + _bump(12.5, 1.8, 1.6) + _bump(17.5, 1.1, 1.5),  # high volume, three peaks (both rush hours + midday transfers)
+    "mixed": 0.25 + _bump(11, 2.0, 1.2) + _bump(15, 2.2, 1.0),  # low volume, single broad late-morning/afternoon bump, no rush-hour peaks
 }
 
 
