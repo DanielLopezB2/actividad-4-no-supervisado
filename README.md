@@ -2,7 +2,7 @@
 
 ## Descripción general
 
-Este proyecto aplica aprendizaje no supervisado a la red de TransMilenio (Bogotá) usada en las actividades anteriores (4 líneas, 20 estaciones). Agrupa **estación-días** (los abordajes por hora de una estación durante un día) en arquetipos de demanda, sin usar etiquetas: estaciones de origen residencial, de destino laboral y de demanda repartida durante el día.
+Este proyecto aplica aprendizaje no supervisado a la red de TransMilenio (Bogotá) usada en las actividades anteriores (4 líneas, 20 estaciones). Agrupa **estación-días** (los abordajes por hora de una estación durante un día) en arquetipos de demanda, sin usar etiquetas: estaciones de origen residencial, de destino laboral, nodos de transbordo y estaciones mixtas de volumen bajo.
 
 El sistema combina:
 
@@ -49,18 +49,19 @@ Las variables son las 18 proporciones horarias del total del día (la forma del 
 
 | Métrica | Valor |
 | --- | --- |
-| k elegido por silueta (rango 2 a 8) | 3 |
-| Silueta con k = 3 (k = 4) | 0.640 (0.607) |
+| k elegido por silueta (rango 2 a 8) | 4 |
+| Silueta con k = 4 (k = 3) | 0.618 (0.608) |
 | ARI KMeans frente a jerárquico | 1.000 |
-| ARI KMeans frente al arquetipo oculto | 0.859 |
+| ARI KMeans frente al arquetipo oculto | 1.000 |
 
 | Cluster | Estación-días | Perfil | Estaciones |
 | --- | --- | --- | --- |
 | 0 | 360 | Pico de mañana (7 h) | Portal Eldorado, Portal Américas, Banderas, Marsella, Modelia, Normandía |
-| 1 | 420 | Plano, volumen alto | Calle 26, Centro Memoria, Ricaurte, Av. Rojas, Corferias, Concejo de Bogotá, Puente Aranda |
+| 1 | 240 | Abultamiento amplio al mediodía, volumen bajo | Av. Rojas, Corferias, Concejo de Bogotá, Puente Aranda |
 | 2 | 420 | Pico de tarde (18 h) | Calle 100, Calle 72, Calle 63, Calle 45, Calle 34, Héroes, Calle 75 |
+| 3 | 180 | Tres picos (8, 12-13 y 18 h), volumen alto | Calle 26, Centro Memoria, Ricaurte |
 
-**Hallazgo:** los arquetipos `hub` y `mixed` tienen una forma horaria casi igual y se distinguen sobre todo por el volumen, por lo que el criterio de silueta los fusiona en el cluster 1. Esto explica el ARI de 0.859 frente a 1.0. Se documenta en detalle en el informe de pruebas.
+**Nota:** en una primera versión `hub` y `mixed` tenían una forma horaria casi igual y la silueta los fusionaba (k = 3, ARI 0.859). Se separaron ajustando nuestros propios supuestos sintéticos; el ARI de 1.000 demuestra el método, no estructura real. Se documenta en el informe de pruebas (sección 6.4).
 
 ![Perfil horario medio por cluster](docs/img/perfiles-cluster.png)
 
@@ -109,5 +110,5 @@ actividad-4/
 
 - El conjunto de datos es sintético; la demanda real depende de factores no modelados (incidentes, calendarios escolares, oferta de buses).
 - Los arquetipos se eligen a mano, de modo que la recuperación casi perfecta de los grupos ilustra el método y no es una afirmación de desempeño real.
-- El criterio de silueta fusiona `hub` y `mixed` (k = 3); con k = 4 la silueta es cercana (0.607) y las dos subnubes ya son visibles en el plano PCA.
+- La separación de `hub` y `mixed` se logró diseñando sus formas horarias; con k = 3 la silueta es casi igual (0.608 frente a 0.618), de modo que la elección de k = 4 es válida pero no abismalmente mejor.
 - Los resultados corresponden a una sola semilla (42); con otras se esperan diferencias pequeñas.
