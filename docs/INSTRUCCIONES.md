@@ -84,4 +84,4 @@ actividad-4/
 |---|---|---|
 | `ModuleNotFoundError: No module named 'src'` | Se ejecutó fuera de la raíz o con `python src/cluster.py` | Ejecutar desde la raíz con `python -m src.cluster` |
 | `ModuleNotFoundError: No module named 'pandas'` | Entorno virtual no activo o dependencias sin instalar | `source .venv/bin/activate` y `pip install -r requirements.txt` |
-| Los tildes aparecen mal en la terminal | Codificación de la terminal distinta de UTF-8 | Configurar la terminal en UTF-8 |
+| Las tildes aparecen mal en la terminal | Codificación de la terminal distinta de UTF-8 | Configurar la terminal en UTF-8 |
